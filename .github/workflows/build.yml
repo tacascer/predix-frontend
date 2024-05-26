@@ -4,8 +4,8 @@ on:
     branches:
       - main
   pull_request:
-    types: [ opened, synchronize, reopened ]
-permissions: { }
+    types: [opened, synchronize, reopened]
+permissions: {}
 jobs:
   sonarcloud:
     name: SonarCloud

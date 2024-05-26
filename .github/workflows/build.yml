@@ -21,3 +21,21 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  run-codeql-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup CodeQL analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+    permissions:
+      security-events: write
+  review-dependencies:
+    uses: tacascer-org/actions-workflows/.github/workflows/review_dependencies.yml@v0
+    permissions:
+      contents: write

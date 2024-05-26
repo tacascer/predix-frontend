@@ -1,5 +1,5 @@
-import {ComponentFixture, TestBed} from "@angular/core/testing";
-import {AppComponent} from "./app.component";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -21,12 +21,14 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it(`should have as title 'demo-angular-jest'`, () => {
+  it("should have as title 'demo-angular-jest'", () => {
     expect(component.title).toEqual('predix-frontend');
   });
 
   it('should render the title', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, predix-frontend');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Hello, predix-frontend',
+    );
   });
 });

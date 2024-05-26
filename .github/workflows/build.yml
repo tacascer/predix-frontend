@@ -1,0 +1,69 @@
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+permissions: { }
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        run: npm install
+      - name: Test and coverage
+        run: npm run test:coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  run-codeql-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup CodeQL analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+    permissions:
+      security-events: write
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Perform dependency review
+        uses: actions/dependency-review-action@v4
+        continue-on-error: true
+        with:
+          retry-on-snapshot-warnings: true
+    permissions:
+      contents: write
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      # To report GitHub Actions status checks
+      statuses: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+      - name: Super-linter
+        uses: super-linter/super-linter@v6.5.1
+        env:
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_EXCLUDE: .*CHANGELOG.md|.*vscode.* # Ignore generated files
+          VALIDATE_JSCPD: false # Disable JSCPD validation
+          JAVASCRIPT_DEFAULT_STYLE: prettier # Use prettier for JavaScript
+          TYPESCRIPT_DEFAULT_STYLE: prettier # Use prettier for TypeScript
